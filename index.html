@@ -1,0 +1,143 @@
+<DOCTYPE html>
+    <html>
+    <meta charset="utf-8" /> 
+    <head>
+        
+       
+         
+       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.0/dist/leaflet.css" /> <!--Esta línea define el tipo de marco del mapa, si es un marco chico o se puede ajustar a la pantalla -->
+       <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+       
+       
+       <link rel="stylesheet" href="https://librekcesar.github.io/busca_zipcodes3norte/leaflet-search-master/leaflet-search-master/src/leaflet-search.css" />
+       <script src="https://librekcesar.github.io/busca_zipcodes3norte/leaflet-search-master/leaflet-search-master/src/leaflet-search.js"></script> 
+    
+         
+    
+      
+        
+     
+         <style>
+            #map { 
+                width: 100%;
+                height: 900px;
+                
+            }
+           </style>
+           
+    
+     
+     
+     </head>
+      <body>
+        <div id="map"></div>
+        
+        
+        
+       
+        <script src="https://unpkg.com/leaflet@1.3.0/dist/leaflet.js"></script>
+        <script src="https://librekcesar.github.io/busca_zipcodes3norte/leaflet-search-master/leaflet-search-master/src/leaflet-search.js"></script>  
+        <script src="poligonos_zipcodes_region_norte_v43_copia.js"></script>
+        
+    
+
+
+
+
+    <script>
+    var data = cobernor;
+    
+    //var map = new L.Map('map', {zoom: 12, center: new L.latLng([19.3737, -99.1342]) });
+    var map = new L.Map('map', {zoom: 12, center: new L.latLng([20.61971, -100.4086]) });
+    
+    
+    map.addLayer(new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
+    
+    
+    
+    
+    //Función que llama la capa Recuerda: EL ATRIBUTO "color" es una función para poner color a la capa la cual fue hecha en el mismo archivo Geojson
+    /*var featuresLayer = new L.GeoJSON(data, {
+                style: function(feature) {
+                    return {color: feature.properties.color };
+                },
+                onEachFeature: function(feature, marker) {
+                    marker.bindPopup('<h4 style="color:'+feature.properties.color+'">'+ feature.properties.id + '</h4>' );
+                }                 //('<h4 style="color:'+feature.properties.color+'">'+ feature.properties.id +'</h4>')
+            });
+    
+    
+    map.addLayer(featuresLayer);*/
+    
+    
+    
+    
+    //codigo hermelando 
+    var featuresLayer = new L.GeoJSON(data, {
+        style: function(feature) {
+            return { color: '#040305', fillColor: '#15D598' };
+        },
+        onEachFeature: function(feature, marker) {
+            var popupContent = '<h4 style="color:' + feature.properties.color + '">' +
+                               'station code: ' + feature.properties.station_code + '</h4>' +
+                               'zipcode: ' + feature.properties.zipcode + '</h4>' + ' ' +
+                               'zonificacion: ' + feature.properties.zonificacion;
+            marker.bindPopup(popupContent);
+        }
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    var searchControl = new L.Control.Search({
+            layer: featuresLayer,
+            propertyName: 'zipcode', //En esta parte del codigo llama el atributo de la capa que pondrá en el buscador 
+            marker: false,
+            moveToLocation: function(latlng, title, map) {
+                //map.fitBounds( latlng.layer.getBounds() );
+                var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+                  map.setView(latlng, zoom); // access the zoom
+            }
+        });
+    
+    
+    
+        
+    
+     searchControl.on('search:locationfound', function(e) {
+            
+            //console.log('search:locationfound', );
+    
+            //map.removeLayer(this._markerSearch)
+    
+            e.layer.setStyle({fillColor: '#3f0', color: '#0f0'});
+            if(e.layer._popup)
+                e.layer.openPopup();
+    
+        }).on('search:collapsed', function(e) {
+    
+            featuresLayer.eachLayer(function(layer) {	//restore feature color
+                featuresLayer.resetStyle(layer);
+            });	
+        });
+        
+        map.addControl( searchControl );  //inizialize search control
+    
+       
+        
+    
+    
+    
+    
+    
+    
+    
+    </script>    
+        
+     
+     </body> 
+     </html>
